@@ -40,6 +40,15 @@ const typeCatchPhrases = {
   '999+': '神秘と現実をつなぐ橋🌉 超越したハイブリッドタイプ'
 };
 
+// テキスト短縮関数
+function shorten(text) {
+  if (!text) return '';
+  const firstSentence = text.split('。')[0];
+  return firstSentence.length > 60
+    ? firstSentence.slice(0, 60) + '…'
+    : firstSentence + '。';
+}
+
 // 性格特性を日本語に変換
 function translateTraits(detail) {
   const translations = {
@@ -61,7 +70,7 @@ function translateTraits(detail) {
 価値観: ${translations.vector[detail.vector] || detail.vector}`;
 }
 
-// 占い結果を生成する関数
+// 簡潔版占い結果を生成する関数
 function generateFortuneMessage(birthday) {
   try {
     const personality = getPersonality(birthday);
@@ -71,16 +80,18 @@ function generateFortuneMessage(birthday) {
     const outerDetail = getDetail(personality.outer);
     const workStyleDetail = getDetail(personality.workStyle);
     
-    return `🔮 あなたの性格診断結果 🔮\n\n` +
-           `誕生日: ${birthday}\n\n` +
-           `🎯 あなたのタイプ 🎯\n` +
-           `${typeCatchPhrases[personality.inner] || personality.inner}\n\n` +
-           `✨ 内面の性格 ✨\n` +
-           `${translateTraits(innerDetail)}\n\n` +
-           `✨ 外面の性格 ✨\n` +
-           `${translateTraits(outerDetail)}\n\n` +
-           `✨ 仕事スタイル ✨\n` +
-           `${translateTraits(workStyleDetail)}`;
+    // 各特性の要約を取得
+    const innerSummary = `${translateTraits(innerDetail).split('\n')[0]}`;
+    const outerSummary = `${translateTraits(outerDetail).split('\n')[0]}`;
+    const workSummary = `${translateTraits(workStyleDetail).split('\n')[0]}`;
+    
+    return `🔮 性格診断結果 🔮\n\n` +
+           `🎯 ${typeCatchPhrases[personality.inner] || personality.inner}\n\n` +
+           `✨ 内面: ${innerSummary}\n` +
+           `✨ 外面: ${outerSummary}\n` +
+           `✨ 仕事: ${workSummary}\n\n` +
+           `📖 詳しく知りたい場合：\n` +
+           `「詳しく ${birthday}」と送信してください`;
   } catch (error) {
     console.error('占い計算エラー:', error);
     return '申し訳ございません。占い結果の計算に失敗しました。';
@@ -244,6 +255,7 @@ function handleEvent(event) {
     const helpMessage = `占いBotへようこそ！🔮\n\n` +
                        `誕生日を「YYYY-MM-DD」の形式で送信してください。\n` +
                        `例: 1993-10-09\n\n` +
+                       `💡 最初は簡潔版が表示され、詳しく知りたい場合は「詳しく」コマンドが案内されます。\n\n` +
                        `「ヘルプ」と送信すると詳しい使い方が確認できます。`;
     
     return client.replyMessage(event.replyToken, {
