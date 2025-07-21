@@ -25,6 +25,21 @@ function isValidDateFormat(dateStr) {
          date.getDate() === day;
 }
 
+// キャッチコピー辞書（11タイプ）
+const typeCatchPhrases = {
+  '111': '情熱の起爆剤🔥 自ら道を切り拓くタイプ',
+  '222': '共感力の天才🌈 優しさで場を和ませるタイプ',
+  '333': '自由な発想家🎨 自分らしく突き抜けるタイプ',
+  '444': '職人肌の努力家⚙️ 着実に物事を積み上げるタイプ',
+  '555': '面倒見のいいリーダー🧭 みんなの中心に立つタイプ',
+  '666': '影の支配者🕶️ 裏で力を発揮するタイプ',
+  '777': '鋭い直感の観察者👁️‍🗨️ 真実を見抜くタイプ',
+  '888': '意志の強い突破者⚡ 逆境を力に変えるタイプ',
+  '999': '理想を追う旅人🌌 常に成長し続けるタイプ',
+  '000': '天才型の変わり者🧠 独自の世界観を持つタイプ',
+  '999+': '神秘と現実をつなぐ橋🌉 超越したハイブリッドタイプ'
+};
+
 // 性格特性を日本語に変換
 function translateTraits(detail) {
   const translations = {
@@ -58,6 +73,8 @@ function generateFortuneMessage(birthday) {
     
     return `🔮 あなたの性格診断結果 🔮\n\n` +
            `誕生日: ${birthday}\n\n` +
+           `🎯 あなたのタイプ 🎯\n` +
+           `${typeCatchPhrases[personality.inner] || personality.inner}\n\n` +
            `✨ 内面の性格 ✨\n` +
            `${translateTraits(innerDetail)}\n\n` +
            `✨ 外面の性格 ✨\n` +
@@ -90,6 +107,8 @@ function generateDetailedFortuneMessage(birthday) {
            `人生サイクル: ${personality.cycle}年周期\n` +
            `人生の基盤: ${lifeBaseTranslations[personality.lifeBase] || personality.lifeBase}\n` +
            `潜在能力: ${personality.potentials.join(', ')}\n\n` +
+           `🎯 あなたのタイプ 🎯\n` +
+           `${typeCatchPhrases[personality.inner] || personality.inner}\n\n` +
            `✨ 内面の性格（ID: ${personality.inner}）✨\n` +
            `${translateTraits(innerDetail)}\n\n` +
            `✨ 外面の性格（ID: ${personality.outer}）✨\n` +
@@ -140,8 +159,10 @@ function generateCompatibilityMessage(birthday1, birthday2) {
     }
     
     return `💕 相性診断結果 💕\n\n` +
-           `👤 ${birthday1}（${person1.inner}）\n` +
-           `👤 ${birthday2}（${person2.inner}）\n\n` +
+           `👤 ${birthday1}\n` +
+           `${typeCatchPhrases[person1.inner] || person1.inner}\n\n` +
+           `👤 ${birthday2}\n` +
+           `${typeCatchPhrases[person2.inner] || person2.inner}\n\n` +
            `📊 ビジネス相性：${scoreToStars(avgBizScore)} (${avgBizScore}/3)\n` +
            `評価：${scoreToText(avgBizScore)}\n\n` +
            `💖 恋愛相性：${scoreToStars(avgLoveScore)} (${avgLoveScore}/3)\n` +
