@@ -42,8 +42,23 @@ function generateFortuneMessage(birthday) {
   }
 }
 
+// スタンプ受信時のメッセージ
+const stickerResponseMessage = {
+  type: 'text',
+  text:
+    'ありがとう! 😊\n\n' +
+    '占いたい場合は誕生日を入力してね\n\n' +
+    '（例：1990-05-15）'
+};
+
 // LINEイベントハンドラー
 function handleEvent(event) {
+  // スタンプが送信された場合の処理
+  if (event.type === 'message' && event.message.type === 'sticker') {
+    console.log('🎪 Sticker received!');
+    return client.replyMessage(event.replyToken, stickerResponseMessage);
+  }
+  
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }
