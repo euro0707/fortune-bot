@@ -419,10 +419,44 @@ function generateHelpMessage() {
          `• 2人の相性も診断可能`;
 }
 
+// 友達追加時のウェルカムメッセージ
+const welcomeMessage = {
+  type: 'text',
+  text:
+    '🌟 登録ありがとう!\n\n' +
+    'あなたの性格タイプを占うよ 🔮\n' +
+    'まずは誕生日を「年-月-日」で教えてね!\n\n' +
+    '（例：1990-05-15）'
+};
+
+// スタンプ受信時のメッセージ
+const stickerResponseMessage = {
+  type: 'text',
+  text:
+    'ありがとう! 😊\n\n' +
+    '占いたい場合は誕生日を入力してね\n\n' +
+    '（例：1990-05-15）'
+};
+
 // LINEイベントハンドラー
 function handleEvent(event) {
   try {
-    console.log('Event received:', event);
+    console.log('🎯 EVENT HANDLER START');
+    console.log('📋 Event type:', event.type);
+    console.log('📋 Event detail:', JSON.stringify(event, null, 2));
+    
+    // 友達追加時の処理
+    if (event.type === 'follow') {
+      console.log('👥 New friend added!');
+      return client.replyMessage(event.replyToken, welcomeMessage);
+    }
+    
+    // スタンプが送信された場合の処理
+    if (event.type === 'message' && event.message.type === 'sticker') {
+      console.log('🎪 Sticker received!');
+      console.log('🎪 Sending sticker response message...');
+      return client.replyMessage(event.replyToken, stickerResponseMessage);
+    }
     
     if (event.type !== 'message' || event.message.type !== 'text') {
       return Promise.resolve(null);
@@ -505,11 +539,17 @@ app.get('/', (req, res) => {
 
 // LINE Webhookエンドポイント
 app.post('/webhook', middleware(config), (req, res) => {
+  console.log('🔥 WEBHOOK RECEIVED at', new Date().toLocaleString());
+  console.log('📨 Events count:', req.body.events.length);
+  
   Promise
     .all(req.body.events.map(handleEvent))
-    .then((result) => res.json(result))
+    .then((result) => {
+      console.log('✅ Webhook処理完了:', result);
+      res.json(result);
+    })
     .catch((err) => {
-      console.error('Webhook処理エラー:', err);
+      console.error('❌ Webhook処理エラー:', err);
       res.status(500).end();
     });
 });
